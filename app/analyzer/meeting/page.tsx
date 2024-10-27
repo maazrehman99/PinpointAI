@@ -62,7 +62,8 @@ const MeetingTaskAnalyzer: React.FC = () => {
           assignee: "John Doe",
           deadline: "2024-11-15",
           priority: "High",
-          status: "Pending",
+          status: "Pending" ,
+
           tags: ["Marketing", "Q4", "Strategy"]
         },
         {
@@ -299,6 +300,7 @@ const MeetingTaskAnalyzer: React.FC = () => {
         </AlertDialogContent>
       </AlertDialog>
     </div>
+    
   );
 };
 
