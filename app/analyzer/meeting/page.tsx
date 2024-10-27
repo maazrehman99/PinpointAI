@@ -25,6 +25,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 interface Task {
   id: number;
@@ -37,6 +39,7 @@ interface Task {
 }
 
 const MeetingTaskAnalyzer: React.FC = () => {
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState<boolean>(false);
@@ -95,12 +98,12 @@ const MeetingTaskAnalyzer: React.FC = () => {
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setIsAnalyzing(true);
-    simulateFileAnalysis();
-  };
+      const file = e.target.files?.[0];
+      if (!file) return;
+  
+      setIsAnalyzing(true); // Optional: If analysis is needed
+      simulateFileAnalysis(); // Your existing function
+    };
 
   const getBadgeVariant = (priority: Task['priority']): string => {
     switch (priority) {
@@ -171,6 +174,72 @@ const MeetingTaskAnalyzer: React.FC = () => {
   const closeEditDialog = () => {
     setShowEditDialog(false);
     setEditedTask(null); // Reset edited task
+  };
+
+  const generatePDF = (tasks: Task[]) => {
+  const doc = new jsPDF('p', 'mm', 'a4'); // Portrait, mm, A4 size
+
+  // Add Header Section
+  doc.setFont('Helvetica', 'bold');
+  doc.setFontSize(12);
+  const titleText = 'Meeting Task List';
+  const dateText = `Date: ${new Date().toLocaleDateString()}`;
+  
+  // Calculate position for the date to align it to the right
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const titleWidth = doc.getTextWidth(titleText);
+  const dateXPosition = pageWidth - doc.getTextWidth(dateText) - 14; // 14 is for the margin
+
+  doc.text(titleText, 14, 18); // Meeting Title
+  doc.text(dateText, dateXPosition, 18); // Date
+
+  // Add a horizontal line under the header
+  doc.setLineWidth(0.5);
+  doc.line(10, 25, 200, 25);
+
+  // Define the columns and rows for the table
+  const columns = ['S.No', 'Description', 'Assignee', 'Deadline', 'Priority', 'Status', 'Tags'];
+  const rows = tasks.map((task) => [
+    task.id,
+    task.description,
+    task.assignee,
+    task.deadline,
+    task.priority,
+    task.status,
+    task.tags.join(', '),
+  ]);
+
+  // Generate the table inside the PDF
+  (doc as any).autoTable({
+    head: [columns],
+    body: rows,
+    startY: 30,
+    theme: 'grid', // Change to 'grid' for a more structured look
+    headStyles: { fillColor: [0, 123, 255], textColor: [255, 255, 255] }, // Blue header with white text
+    alternateRowStyles: { fillColor: [240, 240, 240] }, // Light gray for alternate rows
+    styles: {
+      font: 'Helvetica',
+      fontSize: 10,
+      cellPadding: 4,
+      minCellHeight: 10,
+    },
+  });
+
+  // Add Footer Section with Page Numbers
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(10);
+    doc.text(`Page ${i} of ${pageCount}`, 105, 290, { align: 'center' }); // Centered footer
+  }
+
+  // Save the PDF to the user's system
+  doc.save('Meeting_Tasks_Report.pdf');
+};
+
+  const handleExportTasks = () => {
+    generatePDF(tasks); // Call the PDF generation function
+    setShowConfirmDialog(false); // Close the modal after export
   };
 
   return (
@@ -332,8 +401,8 @@ const MeetingTaskAnalyzer: React.FC = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction>
+            <AlertDialogCancel onClick={() => setShowConfirmDialog(false)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleExportTasks}>
               Confirm Export
             </AlertDialogAction>
           </AlertDialogFooter>
