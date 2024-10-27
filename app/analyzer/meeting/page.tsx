@@ -42,6 +42,10 @@ const MeetingTaskAnalyzer: React.FC = () => {
   const [showConfirmDialog, setShowConfirmDialog] = useState<boolean>(false);
   const [draggedTaskId, setDraggedTaskId] = useState<number | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editedTask, setEditedTask] = useState<Task | null>(null);
 
   const simulateFileAnalysis = (): void => {
     const interval = setInterval(() => {
@@ -130,6 +134,42 @@ const MeetingTaskAnalyzer: React.FC = () => {
 
   const handleDragEnd = () => {
     setDraggedTaskId(null);
+  };
+
+  const handleDeleteTaskClick = (taskId: number) => {
+    setSelectedTaskId(taskId);
+    setShowDeleteDialog(true); // Open confirmation modal
+  };
+
+  const confirmDeleteTask = () => {
+    if (selectedTaskId !== null) {
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== selectedTaskId));
+      closeDeleteDialog(); // Close the modal after deleting
+    }
+  };
+
+  const closeDeleteDialog = () => {
+    setShowDeleteDialog(false);
+    setSelectedTaskId(null); // Reset selected task
+  };
+
+  const handleEditTaskClick = (task: Task) => {
+    setEditedTask({ ...task }); // Copy current task details for editing
+    setShowEditDialog(true); // Open edit modal
+  };
+
+  const handleUpdateTask = () => {
+    if (editedTask) {
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => (task.id === editedTask.id ? editedTask : task))
+      );
+      closeEditDialog(); // Close the modal after updating
+    }
+  };
+
+  const closeEditDialog = () => {
+    setShowEditDialog(false);
+    setEditedTask(null); // Reset edited task
   };
 
   return (
@@ -240,8 +280,8 @@ const MeetingTaskAnalyzer: React.FC = () => {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem>Edit Task</DropdownMenuItem>
-                                <DropdownMenuItem className="text-destructive">
+                                <DropdownMenuItem onClick={() => handleEditTaskClick(task)}>Edit Task</DropdownMenuItem>
+                                <DropdownMenuItem className="text-destructive" onClick={() => handleDeleteTaskClick(task.id)}>
                                   Delete Task
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
@@ -295,6 +335,91 @@ const MeetingTaskAnalyzer: React.FC = () => {
             <AlertDialogAction>
               Confirm Export
             </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete Confirmation Modal */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Delete</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this task? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={closeDeleteDialog}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDeleteTask}>
+              Confirm Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Edit Task Modal */}
+      <AlertDialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Edit Task</AlertDialogTitle>
+            <AlertDialogDescription>
+              Update the task details below.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex flex-col space-y-4">
+            {editedTask && (
+              <>
+                <input
+                  type="text"
+                  value={editedTask.description}
+                  onChange={(e) => setEditedTask({ ...editedTask, description: e.target.value })}
+                  placeholder="Task Description"
+                  className="p-2 border rounded"
+                />
+                <input
+                  type="text"
+                  value={editedTask.assignee}
+                  onChange={(e) => setEditedTask({ ...editedTask, assignee: e.target.value })}
+                  placeholder="Assignee"
+                  className="p-2 border rounded"
+                />
+                <input
+                  type="date"
+                  value={editedTask.deadline}
+                  onChange={(e) => setEditedTask({ ...editedTask, deadline: e.target.value })}
+                  className="p-2 border rounded"
+                />
+                <select
+                  value={editedTask.priority}
+                  onChange={(e) => setEditedTask({ ...editedTask, priority: e.target.value as Task['priority'] })}
+                  className="p-2 border rounded"
+                >
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+                <select
+                  value={editedTask.status}
+                  onChange={(e) => setEditedTask({ ...editedTask, status: e.target.value as Task['status'] })}
+                  className="p-2 border rounded"
+                >
+                  <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                </select>
+                <input
+                  type="text"
+                  value={editedTask.tags.join(', ')} // Assuming tags are strings
+                  onChange={(e) => setEditedTask({ ...editedTask, tags: e.target.value.split(', ').map(tag => tag.trim()) })}
+                  placeholder="Tags (comma separated)"
+                  className="p-2 border rounded"
+                />
+              </>
+            )}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={closeEditDialog}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleUpdateTask}>Update Task</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
