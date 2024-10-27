@@ -10,17 +10,11 @@ export default function Header() {
       <nav className='container flex items-center justify-between'>
         <ul className='flex gap-10 text-sm font-medium'>
           <li>
-            <Link href='/'>Home</Link>
+            <Link href='/'>Meeting Task Analyzer</Link>
           </li>
-          <li>
-            <Link href='/protected/server'>Protected (server)</Link>
-          </li>
-          <li>
-            <Link href='/protected/client'>Protected (client)</Link>
-          </li>
-          <li>
-            <Link href='/api/me'>Who am I?</Link>
-          </li>
+         
+        
+      
         </ul>
 
         <div className='flex items-center justify-between gap-6'>
