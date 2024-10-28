@@ -226,12 +226,13 @@ const MeetingTaskAnalyzer: React.FC = () => {
   });
 
   // Add Footer Section with Page Numbers
-  const pageCount = doc.internal.getNumberOfPages();
+  const pageCount = doc.internal.pages.length - 1; // Exclude the initial empty page
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
     doc.setFontSize(10);
-    doc.text(`Page ${i} of ${pageCount}`, 105, 290, { align: 'center' }); // Centered footer
+    doc.text(`Page ${i} of ${pageCount}`, 105, 290, { align: 'center' });
   }
+  
 
   // Save the PDF to the user's system
   doc.save('Meeting_Tasks_Report.pdf');
