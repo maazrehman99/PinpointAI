@@ -7,9 +7,13 @@ const fs = require('fs');
 const path = require('path');
 const { WebVTTParser } = require('webvtt-parser');
 const OpenAI = require('openai');
+const cors = require('cors'); // Import cors package
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Enable CORS for all routes
+app.use(cors()); // Use CORS middleware
 
 // Initialize OpenAI client
 const openai = new OpenAI({

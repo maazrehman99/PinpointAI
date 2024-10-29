@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import {apiUrl }from '@/app/utils/apiConfig';
 
 interface Task {
   id: number;
@@ -50,60 +51,46 @@ const MeetingTaskAnalyzer: React.FC = () => {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editedTask, setEditedTask] = useState<Task | null>(null);
 
-  const simulateFileAnalysis = (): void => {
-    const interval = setInterval(() => {
-      setUploadProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 200);
-
-    setTimeout(() => {
-      setTasks([
-        {
-          id: 1,
-          description: "Review Q4 marketing strategy and prepare presentation for stakeholders",
-          assignee: "John Doe",
-          deadline: "2024-11-15",
-          priority: "High",
-          status: "Pending" ,
-
-          tags: ["Marketing", "Q4", "Strategy"]
-        },
-        {
-          id: 2,
-          description: "Update website content and implement new SEO recommendations",
-          assignee: "Jane Smith",
-          deadline: "2024-11-20",
-          priority: "Medium",
-          status: "In Progress",
-          tags: ["Website", "SEO"]
-        },
-        {
-          id: 3,
-          description: "Set up analytics dashboard for new campaign",
-          assignee: "Mike Johnson",
-          deadline: "2024-11-25",
-          priority: "Low",
-          status: "Pending",
-          tags: ["Analytics", "Campaign"]
-        }
-      ]);
-      setIsAnalyzing(false);
-      setUploadProgress(0);
-    }, 2000);
-  };
-
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
-      const file = e.target.files?.[0];
-      if (!file) return;
+    const file = e.target.files?.[0];
+    if (!file) return;
   
-      setIsAnalyzing(true); // Optional: If analysis is needed
-      simulateFileAnalysis(); // Your existing function
-    };
+    setIsAnalyzing(true);
+    setUploadProgress(0); // Reset progress to 0 at the start
+  
+    // Send the file to the API
+    const formData = new FormData();
+    formData.append('file', file);
+  
+    // Simulate upload progress
+    const interval = setInterval(() => {
+      setUploadProgress((prev) => {
+        if (prev < 90) {
+          return prev + 10; // Increase by 10% every interval
+        }
+        return prev; // Stop at 90%
+      });
+    }, 500); // Adjust the interval time as needed
+  
+    try {
+      const response = await fetch(`${apiUrl}/api/convert`, {
+        method: 'POST',
+        body: formData,
+      });
+  
+      const data = await response.json();
+      setTasks(data.tasks);
+      setUploadedFileName(file.name);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    } finally {
+      clearInterval(interval); // Clear the interval
+      setUploadProgress(100); // Ensure progress reaches 100%
+      setIsAnalyzing(false);
+    }
+  };
+  
+
 
   const getBadgeVariant = (priority: Task['priority']): string => {
     switch (priority) {
@@ -120,25 +107,29 @@ const MeetingTaskAnalyzer: React.FC = () => {
 
   const handleDragStart = (taskId: number) => {
     setDraggedTaskId(taskId);
-  };
+};
 
-  const handleDragOver = (e: React.DragEvent, targetTaskId: number) => {
+const handleDragOver = (e: React.DragEvent, targetTaskId: number) => {
     e.preventDefault();
     if (draggedTaskId === null || draggedTaskId === targetTaskId) return;
 
     const updatedTasks = [...tasks];
-    const draggedIndex = tasks.findIndex(task => task.id === draggedTaskId);
-    const targetIndex = tasks.findIndex(task => task.id === targetTaskId);
+    const draggedIndex = updatedTasks.findIndex(task => task.id === draggedTaskId);
+    const targetIndex = updatedTasks.findIndex(task => task.id === targetTaskId);
 
     const [draggedTask] = updatedTasks.splice(draggedIndex, 1);
     updatedTasks.splice(targetIndex, 0, draggedTask);
 
     setTasks(updatedTasks);
-  };
+};
 
-  const handleDragEnd = () => {
+const handleDragEnd = () => {
     setDraggedTaskId(null);
-  };
+};
+
+
+
+
 
   const handleDeleteTaskClick = (taskId: number) => {
     setSelectedTaskId(taskId);
