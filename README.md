@@ -68,9 +68,15 @@ The frontend will be running on [http://localhost:3000](http://localhost:3000).
 cd backend
 ```
 - Rename `.env.example` to `.env`.
-- Configure the OpenAI API key:
+- Configure the OpenAI API key and model info:
 ```env
 OPENAI_API_KEY=your_openai_api_key
+PORT=5000
+FRONTEND_ORIGIN=http://localhost:3000
+
+OPENAI_MODEL=
+OPENAI_TEMPERATURE=
+OPENAI_MAX_TOKENS=
 ```
 - Install dependencies and start the backend server:
 ```bash
