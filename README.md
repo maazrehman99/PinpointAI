@@ -24,6 +24,7 @@ A powerful AI-powered meeting analysis tool that automatically generates action 
 - Express.js
 - OpenAI API
 
+
 ## 📋 Prerequisites
 - Node.js (v14 or higher)
 - npm or yarn
