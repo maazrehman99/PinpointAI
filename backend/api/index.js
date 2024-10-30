@@ -30,7 +30,9 @@ const cleanText = (text) => {
         .replace(/[^\w\s,.?!]/g, '') // Remove special characters, keeping punctuation
         .trim(); // Trim leading/trailing whitespace
 };
-
+app.get('/', (req, res) => {
+    res.send('server is working');
+});
 // Unified API to convert .docx or .vtt to text and extract tasks
 app.post('/api/convert', upload.single('file'), async (req, res) => {
     try {
@@ -115,5 +117,7 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
         res.status(500).json({ error: 'Error converting file' });
     }
 });
-
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
 module.exports=app;
