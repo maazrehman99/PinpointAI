@@ -8,6 +8,7 @@ const path = require('path');
 const { WebVTTParser } = require('webvtt-parser');
 const OpenAI = require('openai');
 const cors = require('cors'); // Import cors package
+const { v4: uuidv4 } = require('uuid'); // Import UUID for unique IDs
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -110,8 +111,14 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
             throw new Error("Invalid response format from AI");
         }
 
+        // Add IDs to the tasks
+        const tasksWithIds = parsedResponse.map((task, index) => ({
+            id: uuidv4(), // Generate a unique ID for each task
+            ...task // Spread the existing task properties
+        }));
+
         // Send tasks back to the client
-        res.json({ tasks: parsedResponse });
+        res.json({ tasks: tasksWithIds });
     } catch (error) {
         console.error('Error processing file:', error);
         res.status(500).json({ error: 'Error converting file' });

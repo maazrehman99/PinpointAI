@@ -80,6 +80,7 @@ const MeetingTaskAnalyzer: React.FC = () => {
   
       const data = await response.json();
       setTasks(data.tasks);
+      console.log(data.tasks)
       setUploadedFileName(file.name);
     } catch (error) {
       console.error('Error uploading file:', error);
