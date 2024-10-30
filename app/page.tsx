@@ -219,13 +219,22 @@ const Home = () => {
       {/* Footer */}
       <footer className="border-t dark:border-gray-700">
         <div className="max-w-7xl mx-auto py-12 px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
-          {['Product', 'Company', 'Resources'].map((section, index) => (
+          {['Product','Resources'].map((section, index) => (
             <div key={index}>
               <h4 className="font-semibold text-muted-foreground dark:text-gray-300 mb-4">{section}</h4>
               <ul className="space-y-2">
                 <li><a href="#" className="text-muted-foreground dark:text-gray-400 hover:text-foreground dark:hover:text-gray-200">Features</a></li>
                 <li><a href="#" className="text-muted-foreground dark:text-gray-400 hover:text-foreground dark:hover:text-gray-200">Pricing</a></li>
                 <li><a href="#" className="text-muted-foreground dark:text-gray-400 hover:text-foreground dark:hover:text-gray-200">Support</a></li>
+              </ul>
+            </div>
+          ))}
+          {['Help'].map((section, index) => (
+            <div key={index}>
+              <h4 className="font-semibold text-muted-foreground dark:text-gray-300 mb-4">{section}</h4>
+              <ul className="space-y-2">
+                <li><a href="#" className="text-muted-foreground dark:text-gray-400 hover:text-foreground dark:hover:text-gray-200">Terms & conditions</a></li>
+                <li><a href="#" className="text-muted-foreground dark:text-gray-400 hover:text-foreground dark:hover:text-gray-200">Privacy policy</a></li>
               </ul>
             </div>
           ))}
