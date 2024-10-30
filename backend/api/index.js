@@ -20,8 +20,8 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY // Use the API key from the environment variable
 });
 
-// Setup multer for file uploads
-const upload = multer({ dest: 'uploads/' });
+// Setup multer for in-memory file uploads
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Function to clean the extracted text
 const cleanText = (text) => {
@@ -30,24 +30,26 @@ const cleanText = (text) => {
         .replace(/[^\w\s,.?!]/g, '') // Remove special characters, keeping punctuation
         .trim(); // Trim leading/trailing whitespace
 };
+
 app.get('/', (req, res) => {
     res.send('server is working');
 });
+
 // Unified API to convert .docx or .vtt to text and extract tasks
 app.post('/api/convert', upload.single('file'), async (req, res) => {
     try {
-        const { path: filePath, originalname } = req.file;
+        const { originalname, buffer } = req.file; // Use buffer instead of path
         const fileExtension = path.extname(originalname).toLowerCase();
         let text = '';
 
         // Process .docx file
         if (fileExtension === '.docx') {
-            const { value } = await mammoth.extractRawText({ path: filePath });
+            const { value } = await mammoth.extractRawText({ buffer }); // Use buffer here
             text = value;
         }
         // Process .vtt file
         else if (fileExtension === '.vtt') {
-            const fileContent = fs.readFileSync(filePath, 'utf8');
+            const fileContent = buffer.toString('utf8'); // Convert buffer to string
             const parser = new WebVTTParser();
             const tree = parser.parse(fileContent, 'metadata');
             text = tree.cues.map(cue => cue.text).join(' ');
@@ -110,15 +112,14 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
 
         // Send tasks back to the client
         res.json({ tasks: parsedResponse });
-
-        fs.unlinkSync(filePath); // Delete the file after processing
     } catch (error) {
         console.error('Error processing file:', error);
         res.status(500).json({ error: 'Error converting file' });
     }
 });
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-module.exports=app;
+module.exports = app;
