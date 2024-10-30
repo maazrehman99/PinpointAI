@@ -265,7 +265,7 @@ const handleDragEnd = () => {
 <Card className="lg:col-span-1">
   <CardHeader>
     <CardTitle className="text-xl">Upload Document</CardTitle>
-    <CardDescription>Support for PDF and DOCX files</CardDescription>
+    <CardDescription>Support for VTT and DOCX files</CardDescription>
   </CardHeader>
   <CardContent className="space-y-4">
     <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors">
