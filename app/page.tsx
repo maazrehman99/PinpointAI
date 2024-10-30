@@ -223,7 +223,6 @@ const Home = () => {
             <div key={index}>
               <h4 className="font-semibold text-muted-foreground dark:text-gray-300 mb-4">{section}</h4>
               <ul className="space-y-2">
-              <li><a href="#" className="text-muted-foreground dark:text-gray-400 hover:text-foreground dark:hover:text-gray-200">Features</a></li>
                 <li><a href="#" className="text-muted-foreground dark:text-gray-400 hover:text-foreground dark:hover:text-gray-200">Features</a></li>
                 <li><a href="#" className="text-muted-foreground dark:text-gray-400 hover:text-foreground dark:hover:text-gray-200">Pricing</a></li>
                 <li><a href="#" className="text-muted-foreground dark:text-gray-400 hover:text-foreground dark:hover:text-gray-200">Support</a></li>
