@@ -267,7 +267,7 @@ const handleDragEnd = () => {
                 <Upload className="h-8 w-8 text-muted-foreground" />
                 <span className="font-medium">Drop files or click to upload</span>
                 <span className="text-sm text-muted-foreground">
-                  PDF or DOCX up to 10MB
+                 VTT or DOCX up to 10MB
                 </span>
               </Label>
             </div>

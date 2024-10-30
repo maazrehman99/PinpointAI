@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Brain, Calendar, Users, Clock, ChevronDown, ChevronUp, Star, Zap, Shield, Globe } from 'lucide-react';
+import Link from 'next/link';
+
 
 const Home = () => {
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
@@ -51,6 +53,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-background relative dark:bg-gray-900">
       {/* Gradient Background */}
+     
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 dark:from-blue-900/5 dark:via-purple-900/5 dark:to-pink-900/5 pointer-events-none" />
       
       {/* Navbar */}
@@ -71,13 +74,17 @@ const Home = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white">
-              Start Free Trial <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-            <Button size="lg" variant="outline" className="dark:border-gray-600 dark:text-gray-400 dark:hover:text-gray-200">
-              Watch Demo
-            </Button>
-          </div>
+      <Link href="/sign-up" passHref>
+        <Button size="lg" className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white">
+          Get Started <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+      </Link>
+      <Link href="/" passHref>
+        <Button size="lg" variant="outline" className="dark:border-gray-600 dark:text-gray-400 dark:hover:text-gray-200">
+          Watch Demo
+        </Button>
+      </Link>
+    </div>
 
           {/* Demo Preview */}
           <div className="relative max-w-4xl mx-auto rounded-xl overflow-hidden shadow-2xl">
@@ -193,13 +200,17 @@ const Home = () => {
                 Join thousands of teams already saving hours every week with AI-powered meeting assistance.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white">
-                  Start Free Trial
-                </Button>
-                <Button size="lg" variant="outline" className="dark:border-gray-600 dark:text-gray-400 dark:hover:text-gray-200">
-                  Schedule Demo
-                </Button>
-              </div>
+      <Link href="/sign-up" passHref>
+        <Button size="lg" className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white">
+          Get Started For Free
+        </Button>
+      </Link>
+      <Link href="/" passHref>
+        <Button size="lg" variant="outline" className="dark:border-gray-600 dark:text-gray-400 dark:hover:text-gray-200">
+          Schedule Demo
+        </Button>
+      </Link>
+    </div>
             </CardContent>
           </Card>
         </div>
@@ -211,7 +222,7 @@ const Home = () => {
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <Brain className="w-6 h-6 text-blue-500 dark:text-blue-400" />
-              <span className="font-bold dark:text-gray-200">MeetingTaskAI</span>
+              <span className="font-bold dark:text-gray-200">PinPoint AI</span>
             </div>
             <p className="text-sm text-muted-foreground dark:text-gray-400">
               Transforming meetings into action through AI
@@ -239,9 +250,7 @@ const Home = () => {
             </ul>
           </div>
         </div>
-        <div className="text-center text-sm text-muted-foreground dark:text-gray-400 mt-8">
-          &copy; {new Date().getFullYear()} MeetingTaskAI. All rights reserved.
-        </div>
+        
       </footer>
     </div>
   );
