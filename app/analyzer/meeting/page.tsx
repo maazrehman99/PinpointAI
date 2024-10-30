@@ -51,11 +51,19 @@ const MeetingTaskAnalyzer: React.FC = () => {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [currentDocumentName, setCurrentDocumentName] = useState<string | null>(null);
   const [editedTask, setEditedTask] = useState<Task | null>(null);
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+const [errorMessage, setErrorMessage] = useState('');
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
     const file = e.target.files?.[0];
     if (!file) return;
-  
+    const fileExtension = file.name.split('.').pop()?.toLowerCase();
+    if (fileExtension !== 'vtt' && fileExtension !== 'docx') {
+      setErrorMessage('This file format is currently not supported. Please upload a VTT or DOCX file.');
+      setShowErrorDialog(true);
+      e.target.value = '';
+      return;
+    }
     setIsAnalyzing(true);
     setUploadProgress(0); // Reset progress to 0 at the start
     setCurrentDocumentName(file.name); 
@@ -264,7 +272,7 @@ const handleDragEnd = () => {
       <Input
         id="file"
         type="file"
-        accept=".pdf,.docx"
+        accept=".vtt,.docx"
         onChange={handleFileUpload}
         className="hidden"
       />
@@ -467,7 +475,22 @@ const handleDragEnd = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
+{/* Error Dialog */}
+<AlertDialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Unsupported File Format</AlertDialogTitle>
+      <AlertDialogDescription>
+        {errorMessage}
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogAction onClick={() => setShowErrorDialog(false)}>
+        OK
+      </AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
       {/* Edit Task Modal */}
       <AlertDialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <AlertDialogContent>
