@@ -219,16 +219,6 @@ const Home = () => {
       {/* Footer */}
       <footer className="border-t dark:border-gray-700">
         <div className="max-w-7xl mx-auto py-12 px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
-          <div>
-            <div className="flex items-center space-x-2 mb-4">
-              <Brain className="w-6 h-6 text-blue-500 dark:text-blue-400" />
-              <span className="font-bold dark:text-gray-200">PinPoint AI</span>
-            </div>
-            <p className="text-sm text-muted-foreground dark:text-gray-400">
-              Transforming meetings into action through AI
-            </p>
-          </div>
-          
           {['Product', 'Company', 'Resources'].map((section, index) => (
             <div key={index}>
               <h4 className="font-semibold text-muted-foreground dark:text-gray-300 mb-4">{section}</h4>
