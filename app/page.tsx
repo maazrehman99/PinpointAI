@@ -234,7 +234,6 @@ const Home = () => {
           <div>
             <h4 className="font-semibold text-muted-foreground dark:text-gray-300 mb-4">Stay Connected</h4>
             <ul className="space-y-2">
-              <li><a href="#" className="text-muted-foreground dark:text-gray-400 hover:text-foreground dark:hover:text-gray-200">Twitter</a></li>
               <li><a href="#" className="text-muted-foreground dark:text-gray-400 hover:text-foreground dark:hover:text-gray-200">LinkedIn</a></li>
               <li><a href="#" className="text-muted-foreground dark:text-gray-400 hover:text-foreground dark:hover:text-gray-200">GitHub</a></li>
             </ul>
