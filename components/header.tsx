@@ -65,6 +65,7 @@ export default function Header() {
             </SignedIn>
           </div>
 
+
           {/* Mobile Navigation */}
           <div className='md:hidden flex items-center ml-auto gap-4'>
             <ThemeToggle />
