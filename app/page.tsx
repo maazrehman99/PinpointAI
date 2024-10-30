@@ -45,9 +45,9 @@ const Home = () => {
 
   const stats = [
     { value: "99%", label: "Accuracy" },
-    { value: "50%", label: "Time Saved" },
-    { value: "10k+", label: "Active Users" },
-    { value: "1M+", label: "Tasks Processed" }
+    { value: "100%", label: "Time Saved" },
+    { value: "10+", label: "Active Users" },
+    { value: "50+", label: "Tasks Processed" }
   ];
 
   return (
