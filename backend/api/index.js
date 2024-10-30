@@ -3,22 +3,26 @@ require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
 const mammoth = require('mammoth');
-const fs = require('fs');
 const path = require('path');
 const { WebVTTParser } = require('webvtt-parser');
 const OpenAI = require('openai');
-const cors = require('cors'); // Import cors package
-const { v4: uuidv4 } = require('uuid'); // Import UUID for unique IDs
+const cors = require('cors');
+const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enable CORS for all routes
-app.use(cors()); // Use CORS middleware
+// Enable CORS only for your frontend origin
+const corsOptions = {
+    origin: process.env.FRONTEND_ORIGIN?.split(',') || ['http://localhost:3000'],
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+app.use(cors(corsOptions));
 
 // Initialize OpenAI client
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY // Use the API key from the environment variable
+    apiKey: process.env.OPENAI_API_KEY,
 });
 
 // Setup multer for in-memory file uploads
@@ -39,18 +43,18 @@ app.get('/', (req, res) => {
 // Unified API to convert .docx or .vtt to text and extract tasks
 app.post('/api/convert', upload.single('file'), async (req, res) => {
     try {
-        const { originalname, buffer } = req.file; // Use buffer instead of path
+        const { originalname, buffer } = req.file;
         const fileExtension = path.extname(originalname).toLowerCase();
         let text = '';
 
         // Process .docx file
         if (fileExtension === '.docx') {
-            const { value } = await mammoth.extractRawText({ buffer }); // Use buffer here
+            const { value } = await mammoth.extractRawText({ buffer });
             text = value;
         }
         // Process .vtt file
         else if (fileExtension === '.vtt') {
-            const fileContent = buffer.toString('utf8'); // Convert buffer to string
+            const fileContent = buffer.toString('utf8');
             const parser = new WebVTTParser();
             const tree = parser.parse(fileContent, 'metadata');
             text = tree.cues.map(cue => cue.text).join(' ');
@@ -60,10 +64,10 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
 
         // Clean the extracted text
         const cleanedText = cleanText(text);
-        
+
         // Call OpenAI API to extract tasks
         const response = await openai.chat.completions.create({
-            model: "gpt-4o",
+            model: process.env.OPENAI_MODEL || "gpt-4o",
             messages: [
                 {
                     role: "system",
@@ -81,44 +85,37 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
                     content: `Analyze these meeting notes and extract tasks in valid JSON format without any additional text or formatting.\n\nMeeting notes:\n${cleanedText}`
                 }
             ],
-            temperature: 0.7,
-            max_tokens: 2000
+            temperature: parseFloat(process.env.OPENAI_TEMPERATURE) || 0.7,
+            max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS) || 2000
         });
 
-        // Check if response content exists
         const content = response.choices[0]?.message?.content;
-        console.log("Raw OpenAI Response:", content); // Log the raw response content
+        console.log("Raw OpenAI Response:", content);
 
         if (!content) {
             throw new Error("No content in AI response");
         }
 
-        // Clean the response to remove backticks and any Markdown formatting
         const cleanedContent = content.replace(/```json\s*|\s*```/g, '').trim();
 
-        // Parse the cleaned response
         let parsedResponse;
         try {
             parsedResponse = JSON.parse(cleanedContent);
         } catch (parseError) {
             console.error('Error parsing JSON:', parseError);
-            console.error('Response received:', cleanedContent); // Log the raw cleaned response if parsing fails
+            console.error('Response received:', cleanedContent);
             throw new Error("Invalid JSON response from AI");
         }
 
-        // Validate and format tasks
         if (!Array.isArray(parsedResponse)) {
             throw new Error("Invalid response format from AI");
         }
 
-        // Add IDs to the tasks
-        const tasksWithIds = parsedResponse.map((task, index) => ({
-            id: uuidv4(), // Generate a unique ID for each task
-            ...task // Spread the existing task properties
+        const tasksWithIds = parsedResponse.map((task) => ({
+            id: uuidv4(),
+            ...task
         }));
-        
 
-        // Send tasks back to the client
         res.json({ tasks: tasksWithIds });
     } catch (error) {
         console.error('Error processing file:', error);
