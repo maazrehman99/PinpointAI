@@ -12,6 +12,7 @@ A powerful AI-powered meeting analysis tool that automatically generates action 
 - Edit and delete tasks
 - Export task lists as PDF
 
+
 ## 🚀 Tech Stack
 ### Frontend
 - Next.js
