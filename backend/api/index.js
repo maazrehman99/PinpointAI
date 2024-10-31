@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 5000;
 
 // Enable CORS only for your frontend origin
 const corsOptions = {
-    origin: process.env.FRONTEND_ORIGIN ? [process.env.FRONTEND_ORIGIN] : ['http://localhost:3000'],
+    origin: [process.env.FRONTEND_ORIGIN || 'http://localhost:3000', 'https://pinpoint-ai.vercel.app'],
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 };
