@@ -94,6 +94,15 @@ The backend will be running on [http://localhost:5000](http://localhost:5000).
 4. Review, edit, or delete generated action items as needed.
 5. Export the final task list as a **PDF** once satisfied.
 
+## 👥 Team Members
+
+| Name               | Role                          | GitHub Profile                    |
+|--------------------|-------------------------------|-----------------------------------|
+| [Maaz Rehman 🎩](https://github.com/maazrehman99) | Project Lead, Full Stack Engineer          | [GitHub](https://github.com/maazrehman99) | 
+| [M. Subhan Khan 🌟](https://github.com/githubSubhanKhan)     | Frontend Developer, Designer     | [GitHub](https://github.com/githubSubhanKhan)   | 
+| [Izzah Khursheed 💻](https://github.com/Izzah-Khursheed) | Frontend Developer | [GitHub](https://github.com/Izzah-Khursheed) | 
+| [Jaweria Ameen 📚](https://github.com/jaweria-ameen) |  Documentation,Slides | [GitHub](https://github.com/jaweria-ameen) | 
+
 ## 🤝 Contributing
 We welcome contributions! Please feel free to submit a Pull Request.
 
