@@ -82,18 +82,26 @@ const [errorMessage, setErrorMessage] = useState('');
       });
     }, 500); // Adjust the interval time as needed
   
+ 
     try {
       const response = await fetch(`${apiUrl}/api/convert`, {
         method: 'POST',
         body: formData,
       });
   
-      const data = await response.json();
-      setTasks(data.tasks);
-      console.log(data.tasks)
-      setUploadedFileName(file.name);
+      if (response.ok) { // Check if the response status is 200
+        const data = await response.json();
+        setTasks(data.tasks);
+        console.log(data.tasks)
+        setUploadedFileName(file.name);
+      } else {
+        setErrorMessage("We are facing high usage now. Please try again later. Sorry for the inconvenience faced.");
+        setShowErrorDialog(true);
+      }
     } catch (error) {
       console.error('Error uploading file:', error);
+      setErrorMessage("We are facing high usage now. Please try again later. Sorry for the inconvenience faced.");
+      setShowErrorDialog(true);
     } finally {
       clearInterval(interval); // Clear the interval
       setUploadProgress(100); // Ensure progress reaches 100%
@@ -479,7 +487,7 @@ const handleDragEnd = () => {
 <AlertDialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
   <AlertDialogContent>
     <AlertDialogHeader>
-      <AlertDialogTitle>Unsupported File Format</AlertDialogTitle>
+      <AlertDialogTitle>Oops! Something Went Wrong</AlertDialogTitle>
       <AlertDialogDescription>
         {errorMessage}
       </AlertDialogDescription>
