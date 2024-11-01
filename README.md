@@ -2,6 +2,10 @@
 
 A powerful AI-powered meeting analysis tool that automatically generates action tasks using GPT-4.
 
+## 📺 Demo Video
+
+[![Watch the demo video](https://img.youtube.com/vi/P6-uw7BQ018/0.jpg)](https://www.youtube.com/watch?v=P6-uw7BQ018)
+
 ## 🌟 Features
 - Real-time meeting analysis
 - Automated action item generation

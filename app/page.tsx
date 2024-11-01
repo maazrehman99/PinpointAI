@@ -79,11 +79,11 @@ const Home = () => {
           Get Started <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </Link>
-      <Link href="/" passHref>
-        <Button size="lg" variant="outline" className="dark:border-gray-600 dark:text-gray-400 dark:hover:text-gray-200">
-          Watch Demo
-        </Button>
-      </Link>
+      <Link href="https://www.youtube.com/watch?v=P6-uw7BQ018" passHref>
+  <Button size="lg" variant="outline" className="dark:border-gray-600 dark:text-gray-400 dark:hover:text-gray-200" >
+    Watch Demo
+  </Button>
+</Link>
     </div>
 
           {/* Demo Preview */}
@@ -205,9 +205,9 @@ const Home = () => {
           Get Started For Free
         </Button>
       </Link>
-      <Link href="/" passHref>
+      <Link href="https://www.youtube.com/watch?v=P6-uw7BQ018" passHref>
         <Button size="lg" variant="outline" className="dark:border-gray-600 dark:text-gray-400 dark:hover:text-gray-200">
-          Schedule Demo
+          Watch Demo
         </Button>
       </Link>
     </div>
