@@ -5,7 +5,7 @@ const multer = require('multer');
 const mammoth = require('mammoth');
 const path = require('path');
 const { WebVTTParser } = require('webvtt-parser');
-const OpenAI = require('openai');
+const Cerebras = require('@cerebras/cerebras_cloud_sdk');
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
 
@@ -18,13 +18,11 @@ const corsOptions = {
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 };
-
-
 app.use(cors(corsOptions));
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+// Initialize Cerebras client
+const cerebras = new Cerebras({
+    apiKey: process.env.CEREBRAS_API_KEY
 });
 
 // Setup multer for in-memory file uploads
@@ -39,7 +37,7 @@ const cleanText = (text) => {
 };
 
 app.get('/', (req, res) => {
-    res.send('server is working');
+    res.send('Server is working');
 });
 
 // Unified API to convert .docx or .vtt to text and extract tasks
@@ -67,38 +65,46 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
         // Clean the extracted text
         const cleanedText = cleanText(text);
 
-        // Call OpenAI API to extract tasks
-        const response = await openai.chat.completions.create({
-            model: process.env.OPENAI_MODEL || "gpt-4o",
+        // Call Cerebras API to extract tasks
+        const response = await cerebras.chat.completions.create({
+            model: process.env.CEREBRAS_MODEL || 'llama3.1-70b',
             messages: [
                 {
-                    role: "system",
-                    content: `You are an AI assistant specialized in analyzing meeting notes and extracting actionable tasks. 
-                    For each task you identify:
-                    - Create a clear, actionable description
-                    - Identify the assignee if mentioned (use "Unassigned" if not specified)
-                    - Set an appropriate deadline based on context or urgency
-                    - Determine priority (High/Medium/Low) based on context and urgency
-                    - Set initial status as "Pending"
-                    - Extract or generate relevant tags based on the task context`
+                    role: 'system',
+                    content: `You are an AI meeting assistant specialized in extracting actionable tasks from meeting notes. For each task you identify, please ensure the following:
+
+                    - Create a clear, actionable description.
+                    - Identify the assignee if explicitly mentioned, or use "Unassigned" if no assignee is stated.
+                    - Set a relevant deadline in the format (YY-MM-DD), based on the context or urgency of the task.
+                    - Assess and assign a priority level (High/Medium/Low) based on the urgency and context.
+                    - Set the task's initial status to "Pending".
+                    - Generate relevant tags based on the task's content and context from the meeting discussion.
+
+                    Please ensure that the output is well-structured and actionable for task management purposes.`
                 },
                 {
-                    role: "user",
-                    content: `Analyze these meeting notes and extract tasks in valid JSON format without any additional text or formatting.\n\nMeeting notes:\n${cleanedText}`
+                    role: 'user',
+                    content: `Analyze the following meeting notes and extract the tasks in a valid, structured JSON format. Avoid any additional text, formatting, or commentary.
+
+                    Meeting Notes:
+                    ${cleanedText}`
                 }
             ],
-            temperature: parseFloat(process.env.OPENAI_TEMPERATURE) || 0.7,
-            max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS) || 2000
+            temperature: parseFloat(process.env.CEREBRAS_TEMPERATURE) || 0.7,
+            max_completion_tokens: parseInt(process.env.CEREBRAS_MAX_TOKENS) || 2000,
+            response_format: { type: 'json_object' }
         });
 
         const content = response.choices[0]?.message?.content;
-        console.log("Raw OpenAI Response:", content);
+        console.log('Raw Cerebras Response:', content);
 
         if (!content) {
-            throw new Error("No content in AI response");
+            throw new Error('No content in AI response');
         }
 
-        const cleanedContent = content.replace(/```json\s*|\s*```/g, '').trim();
+        // Remove any introductory text before the JSON array
+        const jsonMatch = content.match(/\[.*\]/s); // Matches content between the first '[' and last ']'
+        const cleanedContent = jsonMatch ? jsonMatch[0] : '';
 
         let parsedResponse;
         try {
@@ -106,11 +112,11 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
         } catch (parseError) {
             console.error('Error parsing JSON:', parseError);
             console.error('Response received:', cleanedContent);
-            throw new Error("Invalid JSON response from AI");
+            throw new Error('Invalid JSON response from AI');
         }
 
         if (!Array.isArray(parsedResponse)) {
-            throw new Error("Invalid response format from AI");
+            throw new Error('Invalid response format from AI');
         }
 
         const tasksWithIds = parsedResponse.map((task) => ({

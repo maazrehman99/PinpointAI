@@ -11,12 +11,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@cerebras/cerebras_cloud_sdk": "^1.10.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "mammoth": "^1.8.0",
     "multer": "^1.4.5-lts.1",
-    "openai": "^4.68.4",
     "uuid": "^11.0.2",
     "webvtt-parser": "^2.2.0"
   }
