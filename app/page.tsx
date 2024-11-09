@@ -7,6 +7,7 @@ import { ArrowRight, Brain, Calendar, Users, Clock, ChevronDown, ChevronUp, Star
 import Link from 'next/link';
 import { useAuth } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
+import AnimatedDescription from '@/components/animated-description';
 
 
 const Home = () => {
@@ -81,7 +82,9 @@ const Home = () => {
             Transform Meetings into<br />Action with AI
           </h1>
           <p className="text-xl mb-8 text-muted-foreground dark:text-gray-400 max-w-2xl mx-auto">
-            Our AI instantly analyzes your meeting summaries, extracts action items, and assigns tasks - saving hours of manual work.
+          <AnimatedDescription delay={30}>
+    Our AI instantly analyzes your meeting summaries, extracts action items, and assigns tasks - saving hours of manual work.
+  </AnimatedDescription>
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
@@ -149,7 +152,9 @@ const Home = () => {
               Powered by Advanced AI
             </h2>
             <p className="text-xl text-muted-foreground dark:text-gray-400 max-w-2xl mx-auto">
-              Our AI understands context, assigns tasks intelligently, and keeps your team aligned
+            <AnimatedDescription delay={30}>
+    Our AI instantly analyzes your meeting summaries, extracts action items, and assigns tasks - saving hours of manual work.
+  </AnimatedDescription>
             </p>
           </div>
           
