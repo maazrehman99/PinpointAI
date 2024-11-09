@@ -5,11 +5,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Brain, Calendar, Users, Clock, ChevronDown, ChevronUp, Star, Zap, Shield, Globe } from 'lucide-react';
 import Link from 'next/link';
+import { useAuth } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
 
 
 const Home = () => {
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
   const [scrolled, setScrolled] = useState(false);
+  const { isLoaded, userId } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check if user is authenticated and redirect if true
+    if (isLoaded && userId) {
+      router.push('/analyzer/meeting');
+    }
+  }, [isLoaded, userId, router]);
 
   useEffect(() => {
     const handleScroll = () => {
